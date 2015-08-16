@@ -7,6 +7,7 @@
 from onep.element.NetworkElement import NetworkElement  
 from onep.element.SessionConfig import SessionConfig  
 from onep.core.util import tlspinning
+from onep.interfaces.InterfaceStatistics import InterfaceStatistics
 from Tkinter import *
 from threading import *
 
@@ -16,12 +17,12 @@ username = "cisco"
 password = "cisco"
 width = 1024
 height = 768
-ne = NetworkElement(router_ip,connection_name)
 connected = 0
 pixel = width/100
 origin_pixel = [width/6,height/2]
 position = origin_pixel
 logo_stage = 0
+connect_attempt = 0
   
 # TLS Connection
 class PinningHandler(tlspinning.TLSUnverifiedElementHandler):  
@@ -31,22 +32,41 @@ class PinningHandler(tlspinning.TLSUnverifiedElementHandler):
        return tlspinning.DecisionType.ACCEPT_ONCE  
 
 #Connect to Network Element with Thread to Allow GUI to function properly
-def ConnectNE(ne,username,password):
+def ConnectNE():
    global frame
-   global connected
+   global connect_attempt
+   global ne
+   global username
+   global password
+
+   ne = NetworkElement(router_ip,connection_name)
    config = SessionConfig(None)  
    config.set_tls_pinning('', PinningHandler(''))  
    config.transportMode = SessionConfig.SessionTransportMode.TLS
-   ne.connect(username, password, config)
-   connected = 1
+   if (ne.is_connected()!=1):
+      try:
+           ne.connect(username, password, config)
+      except:
+           connect_attempt = connect_attempt + 1
+           ConnectNE()
+
+#Currently Unused
+def connected_bg():
+   global frame
+
+   #Start Displaying Live Data
+   tick()
+
+   
  
 #Wait for connection handleer
 def loading():
    global frame
-   global uptime
    global pixel
    global logo_stage
    global position
+   global ne
+   global connect_attempt
 
    position[0] = origin_pixel[0]
    position[1] = origin_pixel[1]
@@ -179,26 +199,296 @@ def loading():
    elif (logo_stage == 9):
       frame.delete(all)
       background()
+      frame.create_text(width/2,height-100,text="Connection Attempt # "+str(connect_attempt),fill="White",font="Helvetica 24")
       logo_stage=0
       origin_pixel[0] = width/6
       origin_pixel[1] = height/2
-      if (connected == 1):
+      if (ne.is_connected() == 1):
          logo_stage = 10
 
 
 
 def tick():
    global frame
-   global connected
    global ne
+   global position
 
    if (logo_stage != 10):
       loading()
       frame.after(100,tick)
       return
 
-   print "test"
+   frame.delete(all)
+   
+   background()
+
+   #Draw Cisco Logo
+   position[0] = width/6
+   position[1] = height/4+pixel*3
+   for i in range(1,7,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,9,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,7,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]-6*pixel
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,15,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]-6*pixel        
+   for i in range(1,19,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,21,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,19,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]+6*pixel        
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,15,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]+6*pixel        
+   for i in range(1,7,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,9,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,7,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]-6*pixel
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,15,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]-6*pixel        
+   for i in range(1,19,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,21,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,19,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]+6*pixel        
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,15,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,13,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+   position[0] = position[0]+6*pixel
+   position[1] = position[1]+6*pixel        
+   for i in range(1,7,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]-pixel
+   for i in range(1,9,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+   position[0] = position[0]+pixel
+   position[1] = position[1]+pixel
+   for i in range(1,7,1):
+         frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+
+
+
+   #Calculate System Uptime
+   #Convert Seconds to Weeks, Days, Hours, Minutes, Seconds
+   uptime_sec = ne.properties.sys_uptime
+
+   seconds = uptime_sec % 60
+   uptime_sec = uptime_sec - seconds
+   years = uptime_sec/(60*60*24*7*365)
+   uptime_sec = uptime_sec - years*(60*60*24*7*365)
+   weeks = uptime_sec/(60*60*24*7)
+   uptime_sec = uptime_sec - weeks*(60*60*24*7)
+   days = uptime_sec/(60*60*24)
+   uptime_sec = uptime_sec-days*(60*60*24)
+   hours = uptime_sec/(60*60)
+   uptime_sec = uptime_sec-hours*(60*60)
+   minutes = uptime_sec/60
+
+   years_percent = years+1
+   weeks_percent = weeks*10/52+1
+   days_percent = days*10/7+1
+   hours_percent = hours*10/24+1
+   minutes_percent = minutes*10/60+1
+   seconds_percent = seconds*10/60+1
+
+   position[0] = width-pixel*14
+   position[1] = height-65
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Seconds",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,seconds_percent,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+   position[0] = width-pixel*14
+   position[1] = height-100
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Minutes",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,minutes_percent,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+   position[0] = width-pixel*14
+   position[1] = height-135
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Hours",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,hours_percent,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+   position[0] = width-pixel*14
+   position[1] = height-170
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Days",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,days_percent,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+   position[0] = width-pixel*14
+   position[1] = height-205
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Weeks",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,weeks_percent,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+   position[0] = width-pixel*14
+   position[1] = height-240
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Years",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,years_percent,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+   position[0] = width-pixel*5
+   position[1] = height-275
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Router Uptime",fill="White")
+
+
+
+
+
+   #Get System Memory in bytes
+   memory_free = ne.get_free_system_memory()
+   memory_total = ne.get_total_system_memory()
+   memory_used = memory_total - memory_free
+
+   memory_free_k = memory_free/1024
+   memory_free_m = memory_free_k/1024
+
+   memory_total_k = memory_total/1024
+   memory_total_m = memory_total_k/1024
+
+   memory_used_k = memory_used/1024
+   memory_used_m = memory_used_k/1024
+
+   memory_tens = memory_used*10 / memory_total + 1
+
+   position[0] = 100
+   position[1] = height-65
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="Memory",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,memory_tens,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+
+
+   #Get CPU data
+   cpu_percent = ne.get_system_cpu_utilization()
+
+   cpu_tens = cpu_percent/10 + 1
+   position[0] = 100
+   position[1] = height-100
+
+   frame.create_text(position[0]-40,position[1]+pixel/2,text="CPU",fill="White")
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,cpu_tens,1):
+            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
+            position[0] = position[0]+pixel
+            position[1] = position[1]-pixel
+
+
+
+
+
+
+
+#   transmit_rate = ne.properties.sys_uptime
+#   receive_rate = ne.interfaces.
+
+
+
    frame.after(100,tick)
+   
 
    
 
@@ -210,15 +500,6 @@ def background():
 
 
   
-# Print some info around the NetworkElement
-#print ne
-#print "System Name:            ", ne.properties.sys_name
-#print "System Uptime:          ", ne.properties.sys_uptime
-#print "Total System Memory:    ", ne.total_system_memory
-#print "Free System Memory:     ", ne.free_system_memory
-#print "System CPU Utilization: ", ne.system_cpu_utilization, "%"
-#print "System Connect Time:    ", ne.get_connect_time()
-#print "System Disconnect Time:  ", ne.get_disconnect_time()
 
 #Setup Tkinter
 root = Tk()
@@ -231,15 +512,17 @@ frame.pack()
 #Load background
 background()
 
+#Load initial connection connection attempt
+connect_attempt = 1
+frame.create_text(width/2,height-100,text="Connection Attempt # "+str(connect_attempt),fill="White",font="Helvetica 24")
+
 #Connect to Network Element in Thread
-Connect_Thread = Thread(target=ConnectNE, args=(ne,username,password))
+Connect_Thread = Thread(target=ConnectNE)
 Connect_Thread.start()
 
 #Start loading screen / Start Connection Handler
 tick()
 
-#Initialize varibles
-#uptime = frame.create_text(width/2,height/2,text=str(ne.properties.sys_uptime),fill="Black")
 
 #set focus for keyboard input
 frame.focus_set()
