@@ -23,6 +23,7 @@ origin_pixel = [width/6,height/2]
 position = origin_pixel
 logo_stage = 0
 connect_attempt = 0
+temp = 0
   
 # TLS Connection
 class PinningHandler(tlspinning.TLSUnverifiedElementHandler):  
@@ -197,7 +198,7 @@ def loading():
             frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
          logo_stage = logo_stage+1
    elif (logo_stage == 9):
-      frame.delete(all)
+      frame.delete("all")
       background()
       frame.create_text(width/2,height-100,text="Connection Attempt # "+str(connect_attempt),fill="White",font="Helvetica 24")
       logo_stage=0
@@ -212,13 +213,14 @@ def tick():
    global frame
    global ne
    global position
+   global temp
 
    if (logo_stage != 10):
       loading()
       frame.after(100,tick)
       return
 
-   frame.delete(all)
+   frame.delete("all")
    
    background()
 
@@ -346,10 +348,11 @@ def tick():
    #Convert Seconds to Weeks, Days, Hours, Minutes, Seconds
    uptime_sec = ne.properties.sys_uptime
 
+   #Extract Values
    seconds = uptime_sec % 60
    uptime_sec = uptime_sec - seconds
-   years = uptime_sec/(60*60*24*7*365)
-   uptime_sec = uptime_sec - years*(60*60*24*7*365)
+   years = uptime_sec/(60*60*24*7*52)
+   uptime_sec = uptime_sec - years*(60*60*24*7*52)
    weeks = uptime_sec/(60*60*24*7)
    uptime_sec = uptime_sec - weeks*(60*60*24*7)
    days = uptime_sec/(60*60*24)
@@ -358,13 +361,40 @@ def tick():
    uptime_sec = uptime_sec-hours*(60*60)
    minutes = uptime_sec/60
 
+   #Calculate percentage to print in blocks of 10%
    years_percent = years+1
-   weeks_percent = weeks*10/52+1
+   weeks_percent = weeks*100/52
+   if (weeks_percent > 0 and weeks_percent < 10):
+      weeks_percent =  2
+   elif (weeks_percent > 97 and weeks_percent < 100):
+      weeks_percent = 11
+   else:
+      weeks_percent = weeks_percent/10 + 1
    days_percent = days*10/7+1
-   hours_percent = hours*10/24+1
-   minutes_percent = minutes*10/60+1
-   seconds_percent = seconds*10/60+1
+   hours_percent = hours*100/24
+   if (hours_percent > 0 and hours_percent < 10):
+      hours_percent = 2
+   elif (hours_percent > 97 and hours_percent < 100):
+      hours_percent = 11
+   else:
+      hours_percent = hours_percent/10 + 1     
+   minutes_percent = minutes*100/60
+   if (minutes_percent > 0 and minutes_percent < 10):
+      minutes_percent = 2
+   elif (minutes_percent > 97 and minutes_percent < 100):
+      minutes_percent = 11
+   else:
+     minutes_percent = minutes_percent/10 + 1      
+   seconds_percent = seconds*100/60
+   if (seconds_percent > 0 and seconds_percent < 10):
+      seconds_percent = 2
+   elif (seconds_percent > 97 and seconds_percent < 100):
+      seconds_percent = 11
+   else:
+      seconds_percent = seconds_percent/10 + 1
 
+
+   #Print Values in blocks of 10
    position[0] = width-pixel*14
    position[1] = height-65
 
