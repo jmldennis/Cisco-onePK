@@ -364,102 +364,59 @@ def tick():
    uptime_sec = uptime_sec-hours*(60*60)
    minutes = uptime_sec/60
 
-   #Calculate percentage to print in blocks of 10%
-   years_percent = years+1
-   weeks_percent = weeks*100/52
-   if (weeks_percent > 0 and weeks_percent < 10):
-      weeks_percent =  2
-   elif (weeks_percent > 97 and weeks_percent < 100):
-      weeks_percent = 11
-   else:
-      weeks_percent = weeks_percent/10 + 1
-   days_percent = days*10/7+1
-   hours_percent = hours*100/24
-   if (hours_percent > 0 and hours_percent < 10):
-      hours_percent = 2
-   elif (hours_percent > 97 and hours_percent < 100):
-      hours_percent = 11
-   else:
-      hours_percent = hours_percent/10 + 1     
-   minutes_percent = minutes*100/60
-   if (minutes_percent > 0 and minutes_percent < 10):
-      minutes_percent = 2
-   elif (minutes_percent > 97 and minutes_percent < 100):
-      minutes_percent = 11
-   else:
-     minutes_percent = minutes_percent/10 + 1      
-   seconds_percent = seconds*100/60
-   if (seconds_percent > 0 and seconds_percent < 10):
-      seconds_percent = 2
-   elif (seconds_percent > 97 and seconds_percent < 100):
-      seconds_percent = 11
-   else:
-      seconds_percent = seconds_percent/10 + 1
-
-
    #Print Values in blocks of 10
-   position[0] = width-pixel*14
-   position[1] = height-65
+   position[0] = pixel*10
+   position[1] = height-pixel*4
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Seconds",fill="White")
-   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
-   for i in range(1,seconds_percent,1):
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*60+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,seconds+1,1):
             frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*14
-   position[1] = height-100
+   position[0] = pixel*10
+   position[1] = height-pixel*7
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Minutes",fill="White")
-   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
-   for i in range(1,minutes_percent,1):
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*60+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,minutes+1,1):
             frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*14
-   position[1] = height-135
+   position[0] = pixel*10
+   position[1] = height-pixel*10
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Hours",fill="White")
-   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
-   for i in range(1,hours_percent,1):
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*24+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,hours+1,1):
             frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*14
-   position[1] = height-170
+   position[0] = pixel*10
+   position[1] = height-pixel*13
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Days",fill="White")
-   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
-   for i in range(1,days_percent,1):
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*7+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,days+1,1):
             frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*14
-   position[1] = height-205
+   position[0] = pixel*10
+   position[1] = height-pixel*16
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Weeks",fill="White")
-   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
-   for i in range(1,weeks_percent,1):
+   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*52+2,position[1]+pixel+2,fill="Black",outline="White")
+   for i in range(1,weeks+1,1):
             frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*14
-   position[1] = height-240
-
-   frame.create_text(position[0]-40,position[1]+pixel/2,text="Years",fill="White")
-   frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
-   for i in range(1,years_percent,1):
-            frame.create_rectangle(position[0],position[1]+pixel*(i-1),position[0]+pixel,position[1]+pixel*i,fill="White")
-            position[0] = position[0]+pixel
-            position[1] = position[1]-pixel
-
-   position[0] = width-pixel*5
-   position[1] = height-275
+   position[0] = pixel*19
+   position[1] = height-pixel*19
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Router Uptime",fill="White")
 
@@ -574,8 +531,8 @@ def tick():
 
    
    #Print Rx Values in blocks of 10
-   position[0] = width-pixel*40
-   position[1] = height-65
+   position[0] = pixel*63
+   position[1] = height-pixel*27
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Rx BCast",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -584,8 +541,8 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*40
-   position[1] = height-100
+   position[0] = pixel*63
+   position[1] = height-pixel*30
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Rx MCast",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -594,8 +551,9 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*40
-   position[1] = height-135
+   position[0] = pixel*63
+   position[1] = height-pixel*33
+
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Rx UCast",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -604,8 +562,9 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*40
-   position[1] = height-170
+   position[0] = pixel*63
+   position[1] = height-pixel*36
+
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Rx Percent",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -614,8 +573,9 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*40
-   position[1] = height-205
+   position[0] = pixel*63
+   position[1] = height-pixel*39
+
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Rx Load",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -624,14 +584,15 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*31
-   position[1] = height-240
+   position[0] = pixel*72
+   position[1] = height-pixel*42
+
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Rx Internet",fill="White")
 
    #Print Tx Values in blocks of 10
-   position[0] = width-pixel*65
-   position[1] = height-65
+   position[0] = pixel*35
+   position[1] = height-pixel*27
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Tx BCast",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -640,8 +601,8 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*65
-   position[1] = height-100
+   position[0] = pixel*35
+   position[1] = height-pixel*30
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Tx MCast",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -650,8 +611,8 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*65
-   position[1] = height-135
+   position[0] = pixel*35
+   position[1] = height-pixel*33
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Tx UCast",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -660,8 +621,8 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*65
-   position[1] = height-170
+   position[0] = pixel*35
+   position[1] = height-pixel*36
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Tx Percent",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -670,8 +631,8 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*65
-   position[1] = height-205
+   position[0] = pixel*35
+   position[1] = height-pixel*39
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Tx Load",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -680,8 +641,8 @@ def tick():
             position[0] = position[0]+pixel
             position[1] = position[1]-pixel
 
-   position[0] = width-pixel*55
-   position[1] = height-240
+   position[0] = pixel*45
+   position[1] = height-pixel*42
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="Tx Internet",fill="White")
 
@@ -703,8 +664,8 @@ def tick():
 
    memory_tens = memory_used*10 / memory_total + 1
 
-   position[0] = 100
-   position[1] = height-65
+   position[0] = pixel*86
+   position[1] = height-pixel*7
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="Memory",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -719,8 +680,8 @@ def tick():
    cpu_percent = ne.get_system_cpu_utilization()
 
    cpu_tens = cpu_percent/10 + 1
-   position[0] = 100
-   position[1] = height-100
+   position[0] = pixel*86
+   position[1] = height-pixel*10
 
    frame.create_text(position[0]-40,position[1]+pixel/2,text="CPU",fill="White")
    frame.create_rectangle(position[0]-2,position[1]-2,position[0]+pixel*10+2,position[1]+pixel+2,fill="Black",outline="White")
@@ -730,8 +691,8 @@ def tick():
             position[1] = position[1]-pixel
 
 
-   position[0] = pixel*20
-   position[1] = height-135
+   position[0] = pixel*96
+   position[1] = height-pixel*13
 
    frame.create_text(position[0]-50,position[1]+pixel/2,text="System Health",fill="White")
 
