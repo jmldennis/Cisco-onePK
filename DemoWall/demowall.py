@@ -3,6 +3,33 @@
 # Simple App used with Raspberry Pi to display basic router
 # status information using Tkinter
 # Be sure to grab to python SDK off Cisco Developer Network
+#
+# lines added to CSR1000V
+# *******************************
+# hostname CSR1000V
+#
+# aaa new-model
+#
+# aaa authentication login default local
+# aaa authentication onep default local
+# aaa authorization exec default local
+# aaa authorization onep default local
+#
+# username cisco priviledge 15 password 0 cisco
+#
+# license accept end user agreement
+# license boot level ax
+#
+# interface GigabitEthernet1
+# ip address x.x.x.x x.x.x.x
+# no shut
+#
+# ip route 0.0.0.0 0.0.0.0 x.x.x.x
+#
+# onep
+# tls
+#**********************************
+
 
 from onep.element.NetworkElement import NetworkElement  
 from onep.element.SessionConfig import SessionConfig  
@@ -28,6 +55,7 @@ temp = 0
 internet_interface = "GigabitEthernet1"
 uplink_bps = 1*1024*1024*1024
 downlink_bps = 1*1024*1024*1024
+connect_reconnect = ""
   
 # TLS Connection
 class PinningHandler(tlspinning.TLSUnverifiedElementHandler):  
@@ -72,6 +100,7 @@ def loading():
    global position
    global ne
    global connect_attempt
+   global connect_reconnect
 
    position[0] = origin_pixel[0]
    position[1] = origin_pixel[1]
@@ -204,7 +233,7 @@ def loading():
    elif (logo_stage == 9):
       frame.delete("all")
       background()
-      frame.create_text(width/2,height-100,text="Connection Attempt # "+str(connect_attempt),fill="White",font="Helvetica 24")
+      frame.create_text(width/2,height-100,text=connect_reconnect+str(connect_attempt),fill="White",font="Helvetica 24")
       logo_stage=0
       origin_pixel[0] = width/6
       origin_pixel[1] = height/2
@@ -219,6 +248,7 @@ def tick():
    global position
    global temp
    global logo_stage
+   global connect_reconnect
 
    if (logo_stage != 10):
       loading()
@@ -227,6 +257,8 @@ def tick():
 
    #Working on Reconnect
    if (ne.is_connected()!=1):
+      print "Network Element Disconnected"
+      connect_reconnect = "Reconnecting Attempt # "
       connect_attempt = 1
       logo_stage = 0
       Connect_Thread = Thread(target=ConnectNE)
@@ -249,6 +281,7 @@ def tick():
          INET_interface_Statistics =  INET_interface.get_statistics()
       except:
          print "Failed to get data from Network Element"
+         connect_reconnect = "Reconnecting Attempt # "
          connect_attempt = 1
          logo_stage = 0
          Connect_Thread = Thread(target=ConnectNE)
@@ -756,8 +789,9 @@ frame.pack()
 background()
 
 #Load initial connection connection attempt
+connect_reconnect = "Connection Attempt # "
 connect_attempt = 1
-frame.create_text(width/2,height-100,text="Connection Attempt # "+str(connect_attempt),fill="White",font="Helvetica 24")
+frame.create_text(width/2,height-100,text=connect_reconnect+str(connect_attempt),fill="White",font="Helvetica 24")
 
 #Connect to Network Element in Thread
 Connect_Thread = Thread(target=ConnectNE)
