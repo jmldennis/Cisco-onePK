@@ -11,7 +11,8 @@ from onep.interfaces.InterfaceStatistics import InterfaceStatistics
 from Tkinter import *
 from threading import *
 
-router_ip = "192.168.1.110"
+#router_ip = "192.168.1.110"
+router_ip = "10.3.14.38"
 connection_name = "Internet Status"
 username = "cisco"
 password = "cisco"
@@ -217,11 +218,45 @@ def tick():
    global ne
    global position
    global temp
+   global logo_stage
 
    if (logo_stage != 10):
       loading()
       frame.after(100,tick)
       return
+
+   #Working on Reconnect
+   if (ne.is_connected()!=1):
+      connect_attempt = 1
+      logo_stage = 0
+      Connect_Thread = Thread(target=ConnectNE)
+      Connect_Thread.start()
+      tick()
+      return
+
+   #Get Data/Re-Connect if Disconnected
+   if (ne.is_connected()==1):
+      try:
+         #Get Uptime
+         uptime_sec = ne.properties.sys_uptime
+         #Get CPU percent used
+         cpu_percent = ne.get_system_cpu_utilization()
+         #Get Memory free and total
+         memory_free = ne.get_free_system_memory()
+         memory_total = ne.get_total_system_memory()
+         #Get INET Interface Data
+         INET_interface = ne.get_interface_by_name(internet_interface)
+         INET_interface_Statistics =  INET_interface.get_statistics()
+      except:
+         print "Failed to get data from Network Element"
+         connect_attempt = 1
+         logo_stage = 0
+         Connect_Thread = Thread(target=ConnectNE)
+         Connect_Thread.start()
+         tick()
+         return
+   
+      
 
    frame.delete("all")
    
@@ -349,7 +384,7 @@ def tick():
 
    #Calculate System Uptime
    #Convert Seconds to Weeks, Days, Hours, Minutes, Seconds
-   uptime_sec = ne.properties.sys_uptime
+   
 
    #Extract Values
    seconds = uptime_sec % 60
@@ -424,8 +459,7 @@ def tick():
 
 
    #Get Interface Statistics
-   INET_interface = ne.get_interface_by_name(internet_interface)
-   INET_interface_Statistics =  INET_interface.get_statistics()
+
    #print INET_interface_Statistics
    rx_ucast =  INET_interface_Statistics.receive_unicast
    rx_mcast =  INET_interface_Statistics.receive_multicast
@@ -649,8 +683,7 @@ def tick():
 
 
    #Get System Memory in bytes
-   memory_free = ne.get_free_system_memory()
-   memory_total = ne.get_total_system_memory()
+
    memory_used = memory_total - memory_free
 
    memory_free_k = memory_free/1024
@@ -677,7 +710,7 @@ def tick():
 
 
    #Get CPU data
-   cpu_percent = ne.get_system_cpu_utilization()
+   
 
    cpu_tens = cpu_percent/10 + 1
    position[0] = pixel*86
